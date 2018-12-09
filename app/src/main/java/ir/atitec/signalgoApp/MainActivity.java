@@ -3,6 +3,7 @@ package ir.atitec.signalgoApp;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 //
@@ -26,7 +27,6 @@ import ir.atitec.signalgo.annotations.GoError;
 import ir.atitec.signalgo.interfaces.ConnectionObserver;
 import ir.atitec.signalgo.interfaces.MonitorableMessage;
 import ir.atitec.signalgo.interfaces.SessionResponse;
-import ir.atitec.signalgo.models.Response;
 import ir.atitec.signalgo.util.GoResponseHandler;
 import ir.atitec.signalgo.util.GoSocketListener;
 import ir.atitec.signalgo.util.RefrenceAnalysor;
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Constants.initServerApi();
 //        GoConvertorHelper goConvertorHelper = new GoConvertorHelper();
 //        try {
 //            String json = goConvertorHelper.serialize(new MyClass());
@@ -94,29 +94,29 @@ public class MainActivity extends AppCompatActivity {
 
 
 //
-        HttpCore.instance()
-                .setMonitorableMessage(new MonitorableMessage() {
-
-                    @Override
-                    public void onMonitor(Object response, GoError[] goErrors) {
-
-                    }
-
-                    @Override
-                    public void onServerResultWithoutResponse(Object response, GoResponseHandler responseHandler) {
-                        if (response != null) {
-                            responseHandler.onSuccess(response);
-                        } else {
-                            responseHandler.onConnectionError();
-                        }
-                    }
-
-                    @Override
-                    public void onServerResponse(Response response, GoResponseHandler responseHandler) {
-//                        MessageContract messageContract = (MessageContract) response;
-                    }
-                })
-                .withUrl("http://185.105.239.40:4949/app").init();
+//        HttpCore.instance()
+//                .setMonitorableMessage(new MonitorableMessage() {
+//
+//                    @Override
+//                    public void onMonitor(Object response, GoError[] goErrors) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onServerResultWithoutResponse(Object response, GoResponseHandler responseHandler) {
+//                        if (response != null) {
+//                            responseHandler.onSuccess(response);
+//                        } else {
+//                            responseHandler.onConnectionError();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onServerResponse(Response response, GoResponseHandler responseHandler) {
+////                        MessageContract messageContract = (MessageContract) response;
+//                    }
+//                })
+//                .withUrl("http://185.105.239.40:4949/app").init();
 
 //        TestService.getToken("username", "password", new GoResponseHandler<Object>() {
 //            @Override
@@ -124,12 +124,12 @@ public class MainActivity extends AppCompatActivity {
 //
 //            }
 //        });
-        TestService.testNull(new GoResponseHandler<Object>() {
-            @Override
-            public void onSuccess(Object o) {
-
-            }
-        });
+//        TestService.testNull(new GoResponseHandler<Object>() {
+//            @Override
+//            public void onSuccess(Object o) {
+//
+//            }
+//        });
 
 //
 //        TestService.getPost(new MyClass(), new GoResponseHandler<MyClass>() {
@@ -156,18 +156,26 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void onButtonClick(View view) {
-        TestService.hello("hamed", "1234", new GoResponseHandler<Boolean>() {
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUserName("علی یوسفی");
+        ServerMethods.TestUtf8(userInfo, new GoResponseHandler<MessageContract2<UserInfo>>() {
             @Override
-            public void onSuccess(Boolean aBoolean) {
-                Toast.makeText(MainActivity.this, "response :" + aBoolean, Toast.LENGTH_SHORT).show();
-                TestService.test(new GoResponseHandler<String>() {
-                    @Override
-                    public void onSuccess(String s) {
-                        Toast.makeText(MainActivity.this, "response2 : " + s, Toast.LENGTH_SHORT).show();
-                    }
-                });
+            public void onSuccess(MessageContract2<UserInfo> userInfoMessageContract2) {
+                Log.d("onsuccess","test");
             }
         });
+//        TestService.hello("hamed", "1234", new GoResponseHandler<Boolean>() {
+//            @Override
+//            public void onSuccess(Boolean aBoolean) {
+//                Toast.makeText(MainActivity.this, "response :" + aBoolean, Toast.LENGTH_SHORT).show();
+//                TestService.test(new GoResponseHandler<String>() {
+//                    @Override
+//                    public void onSuccess(String s) {
+//                        Toast.makeText(MainActivity.this, "response2 : " + s, Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//            }
+//        });
     }
 
     @Override

@@ -5,7 +5,6 @@ import android.util.Log;
 import ir.atitec.signalgo.annotations.GoMethodName;
 import ir.atitec.signalgo.annotations.GoServiceName;
 import ir.atitec.signalgo.models.GoKeyValue;
-import ir.atitec.signalgo.models.Response;
 import ir.atitec.signalgo.models.MethodCallInfo;
 import ir.atitec.signalgo.models.MethodCallbackInfo;
 import ir.atitec.signalgo.models.QueueMethods;
@@ -439,11 +438,9 @@ public class Connector {
                                 System.out.println(queueMethods.methodName + " " + o.toString());
                             else
                                 System.out.println(queueMethods.methodName + " null Response");
-                            if (o instanceof Response) {
-                                queueMethods.goResponseHandler.onServerResponse((Response) o);
-                            } else {
+
                                 queueMethods.goResponseHandler.onServerResponse(o);
-                            }
+
                         }
 
                     } catch (Exception ex) {

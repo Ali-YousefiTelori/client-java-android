@@ -1,7 +1,6 @@
 package ir.atitec.signalgo.interfaces;
 
 import ir.atitec.signalgo.annotations.GoError;
-import ir.atitec.signalgo.models.Response;
 import ir.atitec.signalgo.util.GoResponseHandler;
 
 /**
@@ -13,5 +12,5 @@ public interface MonitorableMessage<T> {
 
     void onServerResultWithoutResponse(T response, GoResponseHandler<T> responseHandler);
 
-    void onServerResponse(Response response, GoResponseHandler<T> responseHandler);
+    void onServerResponse(Object response, GoResponseHandler<T> responseHandler);
 }

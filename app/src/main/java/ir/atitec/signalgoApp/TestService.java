@@ -18,7 +18,6 @@ import ir.atitec.signalgo.SignalGoCore;
 import ir.atitec.signalgo.annotations.GoHeader;
 import ir.atitec.signalgo.interfaces.ClientDuplex;
 import ir.atitec.signalgo.Connector;
-import ir.atitec.signalgo.models.Response;
 import ir.atitec.signalgo.util.GoResponseHandler;
 import ir.atitec.signalgo.annotations.GoError;
 import ir.atitec.signalgo.annotations.GoMethodName;

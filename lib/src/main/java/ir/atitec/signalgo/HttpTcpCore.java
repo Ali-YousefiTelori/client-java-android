@@ -50,36 +50,24 @@ import ir.atitec.signalgo.util.GoResponseHandler;
  * Created by hamed on 12/13/2017.
  */
 
-public class  HttpCore extends Core {
+public class HttpTcpCore extends Core {
 
     private boolean cookieEnabled = false;
-    private RestTemplate restTemplate;
     private List<String> cookie;
     private boolean setUtf8 = true;
     private boolean ignoreNull = true;
 
-    private HttpCore() {
-
-
-//
-//        objectMapper = new ObjectMapper();
-//        objectMapper.configure(MapperFeature.USE_ANNOTATIONS, true);
-//        objectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-//        objectMapper.configure(JsonParser.Feature.IGNORE_UNDEFINED, true);
-//        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-//        //mapper.configure(JsonParser.Feature.ALLOW_MISSING_VALUES, true);
-//        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-//        objectMapper.setTimeZone(DateTimeZone.getDefault().toTimeZone());
+    private HttpTcpCore() {
 
     }
 
-    public synchronized static HttpCore instance() {
-        Core c = Core.map.get(HttpCore.class);
+    public synchronized static HttpTcpCore instance() {
+        Core c = Core.map.get(HttpTcpCore.class);
         if (c == null) {
-            c = new HttpCore();
+            c = new HttpTcpCore();
             Core.map.put(HttpCore.class, c);
         }
-        return (HttpCore) c;
+        return (HttpTcpCore) c;
     }
 
 
@@ -160,27 +148,27 @@ public class  HttpCore extends Core {
         @Override
         protected Object doInBackground(Object... objects) {
             try {
-                ResponseEntity responseEntity =
-                        restTemplate.exchange(url, httpMethod, getEntity(objects, keys, responseHandler.getGoHeaders()), String.class);
-                if (responseEntity.getStatusCode() != HttpStatus.OK) {
-                    Log.e("HttpCore", url + "  " + responseEntity.toString());
-                    return responseEntity;
-                }
-                if (responseHandler.getType() == null) {
-                    Log.d("HttpCore", url + "  " + responseEntity.toString());
-                    return responseEntity;
-                }
-                Object response = getGoConvertorHelper().deserialize((String) responseEntity.getBody(), getObjectMapper().constructType(responseHandler.getType()));
-                if (cookieEnabled) {
-                    Object o = responseEntity.getHeaders().get("Set-Cookie");
-                    if (o != null) {
-                        cookie = (List<String>) o;
-                    }
-                }
-                Log.d("HttpCore", url + "  " + response);
-                //if (response != null)
-                //  Log.e("Core", "response : " + url + "  " + response.message + " " + response.stack);
-                return response;
+//                ResponseEntity responseEntity =
+//                        restTemplate.exchange(url, httpMethod, getEntity(objects, keys, responseHandler.getGoHeaders()), String.class);
+//                if (responseEntity.getStatusCode() != HttpStatus.OK) {
+//                    Log.e("TcpHttpCore", url + "  " + responseEntity.toString());
+//                    return responseEntity;
+//                }
+//                if (responseHandler.getType() == null) {
+//                    Log.d("TcpHttpCore", url + "  " + responseEntity.toString());
+//                    return responseEntity;
+//                }
+//                Object response = getGoConvertorHelper().deserialize((String) responseEntity.getBody(), getObjectMapper().constructType(responseHandler.getType()));
+//                if (cookieEnabled) {
+//                    Object o = responseEntity.getHeaders().get("Set-Cookie");
+//                    if (o != null) {
+//                        cookie = (List<String>) o;
+//                    }
+//                }
+//                Log.d("TcpHttpCore", url + "  " + response);
+//                //if (response != null)
+//                //  Log.e("Core", "response : " + url + "  " + response.message + " " + response.stack);
+//                return response;
             } catch (Exception e) {
                 Log.e("Core", "exception : " + url + "  " + e.getMessage());
                 e.printStackTrace();
@@ -220,10 +208,10 @@ public class  HttpCore extends Core {
                                 if (objects[i] instanceof String) {
                                     str = (String) objects[i];
                                 } else {
-                                    str = new String(getObjectMapper().writeValueAsString(objects[i]).getBytes(),Charset.forName("UTF-8"));
+                                    str = getObjectMapper().writeValueAsString(objects[i]);
                                 }
-                                map.add(keys[i], objects[i]);
-                            } catch (Exception e) {
+                                map.add(keys[i], str);
+                            } catch (JsonProcessingException e) {
                                 e.printStackTrace();
                             }
                         }
@@ -276,7 +264,7 @@ public class  HttpCore extends Core {
         return cookieEnabled;
     }
 
-    public HttpCore setCookieEnabled(boolean cookieEnabled) {
+    public HttpTcpCore setCookieEnabled(boolean cookieEnabled) {
         this.cookieEnabled = cookieEnabled;
         return this;
     }
@@ -285,7 +273,7 @@ public class  HttpCore extends Core {
         return setUtf8;
     }
 
-    public HttpCore setSetUtf8(boolean setUtf8) {
+    public HttpTcpCore setSetUtf8(boolean setUtf8) {
         this.setUtf8 = setUtf8;
         return this;
     }
@@ -294,7 +282,7 @@ public class  HttpCore extends Core {
         return ignoreNull;
     }
 
-    public HttpCore setIgnoreNull(boolean ignoreNull) {
+    public HttpTcpCore setIgnoreNull(boolean ignoreNull) {
         this.ignoreNull = ignoreNull;
         return this;
     }
@@ -302,31 +290,6 @@ public class  HttpCore extends Core {
     @Override
     public void init() {
         super.init();
-        restTemplate = new RestTemplate();
-        MappingJackson2HttpMessageConverter m = new MappingJackson2HttpMessageConverter();
-        m.setObjectMapper(getObjectMapper());
-        FormHttpMessageConverter form = new FormHttpMessageConverter();
-        form.addPartConverter(m);
-        restTemplate.getMessageConverters().add(form);
-        if (setUtf8)
-            restTemplate.getMessageConverters().add(new StringHttpMessageConverter(Charset.forName("UTF-8")));
-        else
-            restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
-        restTemplate.getMessageConverters().add(m);
-        restTemplate.getMessageConverters().add(new FormHttpMessageConverter());
-
-        restTemplate.setErrorHandler(new ResponseErrorHandler() {
-            @Override
-            public boolean hasError(ClientHttpResponse response) throws IOException {
-                Log.d("Core", response.toString());
-                return false;
-            }
-
-            @Override
-            public void handleError(ClientHttpResponse response) throws IOException {
-                Log.d("Core", response.toString());
-            }
-        });
     }
 
     @Override

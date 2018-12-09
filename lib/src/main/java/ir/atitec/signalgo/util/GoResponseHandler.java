@@ -14,7 +14,6 @@ import ir.atitec.signalgo.Core;
 import ir.atitec.signalgo.annotations.GoError;
 import ir.atitec.signalgo.annotations.GoHeader;
 import ir.atitec.signalgo.annotations.GoMethodName;
-import ir.atitec.signalgo.models.Response;
 import needle.Needle;
 
 /**
@@ -25,7 +24,7 @@ public abstract class GoResponseHandler<T> {
     private Core core;
     private GoMethodName goMethodName;
     private List<GoHeader> goHeaders = new ArrayList<>();
-    private TypeToken<Response<T>> typeToken;
+    private TypeToken<T> typeToken;
     private TypeToken<T> typeToken2;
 
 
@@ -63,9 +62,7 @@ public abstract class GoResponseHandler<T> {
             public void run() {
                 if (getCore().getMonitorableMessage() == null)
                     onSuccess((T) response);
-                else if (response instanceof Response) {
-                    getCore().getMonitorableMessage().onServerResponse((Response) response, GoResponseHandler.this);
-                } else {
+                else {
                     getCore().getMonitorableMessage().onServerResultWithoutResponse(response, GoResponseHandler.this);
                 }
             }
@@ -103,7 +100,7 @@ public abstract class GoResponseHandler<T> {
         return null;
     }
 
-    public void setTypeToken(TypeToken<Response<T>> typeToken) {
+    public void setTypeToken(TypeToken<T> typeToken) {
 //        if (getCore().getResponseClass() != null) {
 //            this.typeToken = (TypeToken<Response<T>>) typeToken.getSubtype(getCore().getResponseClass());
 //        } else {

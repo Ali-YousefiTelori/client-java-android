@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import ir.atitec.signalgo.interfaces.MonitorableMessage;
-import ir.atitec.signalgo.models.Response;
 import ir.atitec.signalgo.util.GoConvertorHelper;
 import ir.atitec.signalgo.util.GoResponseHandler;
 
@@ -45,7 +44,7 @@ public abstract class Core {
         return c;
     }
 
-    private Class<? extends Response> responseClass;
+    private Class<?> responseClass;
     private MonitorableMessage monitorableMessage;
 
     protected Core() {
@@ -61,11 +60,11 @@ public abstract class Core {
         return goConvertorHelper;
     }
 
-    public Class<? extends Response> getResponseClass() {
+    public Class<?> getResponseClass() {
         return responseClass;
     }
 
-    public Core setResponseClass(Class<? extends Response> responseClass) {
+    public Core setResponseClass(Class<?> responseClass) {
         this.responseClass = responseClass;
         return this;
     }
