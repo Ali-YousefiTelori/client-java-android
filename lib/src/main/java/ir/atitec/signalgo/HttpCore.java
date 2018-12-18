@@ -50,7 +50,7 @@ import ir.atitec.signalgo.util.GoResponseHandler;
  * Created by hamed on 12/13/2017.
  */
 
-public class  HttpCore extends Core {
+public class HttpCore extends Core {
 
     private boolean cookieEnabled = false;
     private RestTemplate restTemplate;
@@ -211,21 +211,20 @@ public class  HttpCore extends Core {
 //                    map.add("file", value);
 //                    httpEntity = new HttpEntity(map, httpHeaders);
 //                } else
-                    if (methodType == GoMethodName.MethodType.httpUploadFile || methodType == GoMethodName.MethodType.httpPost_formData || methodType == GoMethodName.MethodType.httpPut_formData) {
+                if (methodType == GoMethodName.MethodType.httpUploadFile || methodType == GoMethodName.MethodType.httpPost_formData || methodType == GoMethodName.MethodType.httpPut_formData) {
                     httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
                     LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
                     File fileParameter = null;
                     for (int i = 0; i < keys.length; i++) {
                         if (objects[i] instanceof File) {
-                            fileParameter=(File)objects[i];
-                        }
-                        else if (objects[i] != null) {
+                            fileParameter = (File) objects[i];
+                        } else if (objects[i] != null) {
                             try {
                                 String str = "";
                                 if (objects[i] instanceof String) {
                                     str = (String) objects[i];
                                 } else {
-                                    str = new String(getObjectMapper().writeValueAsString(objects[i]).getBytes(),Charset.forName("UTF-8"));
+                                    str = new String(getObjectMapper().writeValueAsString(objects[i]).getBytes(), Charset.forName("UTF-8"));
                                 }
                                 map.add(keys[i], objects[i]);
                             } catch (Exception e) {
@@ -233,8 +232,15 @@ public class  HttpCore extends Core {
                             }
                         }
                     }
-                    if (fileParameter != null)
-                    {
+                    if (fileParameter == null) {
+                        for (int i = 0; i < objects.length; i++) {
+                            if (objects[i] instanceof File) {
+                                fileParameter = (File) objects[i];
+                                break;
+                            }
+                        }
+                    }
+                    if (fileParameter != null) {
                         FileSystemResource value = new FileSystemResource(fileParameter);
                         map.add("file", value);
                     }
@@ -361,7 +367,7 @@ public class  HttpCore extends Core {
 
             if (params[i] == null && ignoreNull) {
                 int a1 = url.lastIndexOf("?", index);
-                int a2 = url.lastIndexOf("&", index)-1;
+                int a2 = url.lastIndexOf("&", index) - 1;
                 int a3 = url.lastIndexOf("/", index);
                 int max = Math.max(Math.max(a1, a2), a3);
                 url = url.substring(0, max + 1) + url.substring(Math.min(index2 + 2, url.length()), url.length());
