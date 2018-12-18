@@ -204,17 +204,22 @@ public class  HttpCore extends Core {
             }
             HttpEntity httpEntity = null;
             if (objects != null && objects.length > 0) {
-                if (methodType == GoMethodName.MethodType.httpUploadFile) {
+//                if (methodType == GoMethodName.MethodType.httpUploadFile) {
+//                    httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+//                    LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+//                    FileSystemResource value = new FileSystemResource((File) objects[0]);
+//                    map.add("file", value);
+//                    httpEntity = new HttpEntity(map, httpHeaders);
+//                } else
+                    if (methodType == GoMethodName.MethodType.httpUploadFile || methodType == GoMethodName.MethodType.httpPost_formData || methodType == GoMethodName.MethodType.httpPut_formData) {
                     httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
                     LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-                    FileSystemResource value = new FileSystemResource((File) objects[0]);
-                    map.add("file", value);
-                    httpEntity = new HttpEntity(map, httpHeaders);
-                } else if (methodType == GoMethodName.MethodType.httpPost_formData || methodType == GoMethodName.MethodType.httpPut_formData) {
-                    httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
-                    LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+                    File fileParameter = null;
                     for (int i = 0; i < keys.length; i++) {
-                        if (objects[i] != null) {
+                        if (objects[i].getClass() == File.class) {
+                            fileParameter=(File)objects[i];
+                        }
+                        else if (objects[i] != null) {
                             try {
                                 String str = "";
                                 if (objects[i] instanceof String) {
@@ -227,6 +232,11 @@ public class  HttpCore extends Core {
                                 e.printStackTrace();
                             }
                         }
+                    }
+                    if (fileParameter != null)
+                    {
+                        FileSystemResource value = new FileSystemResource(fileParameter);
+                        map.add("file", value);
                     }
                     httpEntity = new HttpEntity(map, httpHeaders);
                 } else if (methodType == GoMethodName.MethodType.httpPost) {
@@ -400,14 +410,15 @@ public class  HttpCore extends Core {
 //        } else if (methodName.type().getId() == GoMethodName.MethodType.httpPost_formData.getId()) {
 //
 //        }
-        else if (methodName.type().getId() == GoMethodName.MethodType.httpUploadFile.getId()) {
-            if (params.length == 1) {
-                File f = (File) params[i];
-                send(url, null, responseHandler, methodName.type(), f);
-            } else {
-                throw new RuntimeException("upload file must have just one param for post and other param must send with GET!!");
-            }
-        } else {
+//        else if (methodName.type().getId() == GoMethodName.MethodType.httpUploadFile.getId()) {
+//            if (params.length == 1) {
+//                File f = (File) params[i];
+//                send(url, null, responseHandler, methodName.type(), f);
+//            } else {
+//                throw new RuntimeException("upload file must have just one param for post and other param must send with GET!!");
+//            }
+//        }
+        else {
             send(url, methodName.multipartKeys(), responseHandler, methodName.type(), pa);
         }
     }
